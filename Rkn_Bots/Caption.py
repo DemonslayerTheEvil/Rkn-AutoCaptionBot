@@ -9,16 +9,20 @@ import asyncio, re, time, sys, os
 from .database import total_user, getid, delete, addCap, updateCap, insert, chnl_ids
 from pyrogram.errors import FloodWait
 
-@Client.on_message(filters.private & filters.user(Rkn_Bots.ADMIN) & filters.command(["rknusers"]))
-async def all_db_users_here(client, message):
-    start_t = time.time()
-    rkn = await message.reply_text("Processing...")
-    uptime = time.strftime("%Hh%Mm%Ss", time.gmtime(time.time() - client.uptime))
+@Client.on_message(filters.private & filters.user(Rkn_Bots.ADMIN) & filters.command(["users"]))
+async def user_status(client, message):
+    user_id = message.from_user.id
+    first_name = message.from_user.first_name
+    username = message.from_user.username or "No Username"
     total_users = await total_user()
-    end_t = time.time()
-    time_taken_s = (end_t - start_t) * 1000
-    await rkn.edit(text=f"**--Bot Processed--** \n\n**Bot Started UpTime:** {uptime} \n**Bot Current Ping:** `{time_taken_s:.3f} ms` \n**All Bot Users:** `{total_users}`")
-
+    
+    response = (
+        f"👤 Name: {first_name}\n"
+        f"🕵🏻‍♂️ Username: @{username}\n"
+        f"🔄 Total Users: {total_users}"
+    )
+    
+    await message.reply_text(response)
 
 @Client.on_message(filters.private & filters.user(Rkn_Bots.ADMIN) & filters.command(["broadcast"]))
 async def broadcast(bot, message):
@@ -33,6 +37,7 @@ async def broadcast(bot, message):
         await rkn.edit(f"bot broadcasting started...")
         async for user in all_users:
             try:
+                time.sleep(1)
                 await message.reply_to_message.copy(user['_id'])
                 success += 1
             except errors.InputUserDeactivated:
@@ -51,14 +56,12 @@ async def broadcast(bot, message):
                 await asyncio.sleep(e.x)
         await rkn.edit(f"<u>Broadcast Completed</u>\n\n• Total users: {tot}\n• Successful: {success}\n• Blocked users: {blocked}\n• Deleted accounts: {deactivated}\n• Unsuccessful: {failed}")
 
-
 @Client.on_message(filters.private & filters.user(Rkn_Bots.ADMIN) & filters.command("restart"))
 async def restart_bot(b, m):
     rkn_msg = await b.send_message(text="**🔄 Processes stopped. Bot is restarting...**", chat_id=m.chat.id)
     await asyncio.sleep(3)
     await rkn_msg.edit("**✅ Bot is restarted. You can now use me**")
     os.execl(sys.executable, sys.executable, *sys.argv)
-
 
 @Client.on_message(filters.command("start") & filters.private)
 async def start_cmd(bot, message):
@@ -73,12 +76,11 @@ async def start_cmd(bot, message):
             types.InlineKeyboardButton('🔥 Source Code 🔥', url='https://t.me/code_lelo/2')
         ]]))
 
-
-@Client.on_message(filters.command("set_caption") & filters.channel)
+@Client.on_message(filters.command(["set_caption", "set"]) & filters.channel)
 async def setCaption(bot, message):
     if len(message.command) < 2:
         return await message.reply(
-            "<b>give me a caption to set</b>\n<u>Example:- ⬇️</u> <code>/set_caption {file_name}\n\n{file_caption}\n\nsize » {file_size}\n\nJoin :- @your_channel</code>"
+            "<b>give me a caption to set</b>\n<u>Example:- ⬇️</u>\n\n<code>/set_caption {file_name}\n\n{file_caption}\n\nsize » {file_size}\n\nJoin :- @your_channel</code>"
         )
     chnl_id = message.chat.id
     caption = (
@@ -92,7 +94,6 @@ async def setCaption(bot, message):
         await addCap(chnl_id, caption)
         return await message.reply(f"Successfully Updated Your Caption.\n\nYour New Caption: `{caption}`")
 
-
 @Client.on_message(filters.command(["delcaption", "del_caption", "delete_caption"]) & filters.channel)
 async def delCaption(_, msg):
     chnl_id = msg.chat.id
@@ -104,7 +105,6 @@ async def delCaption(_, msg):
         await asyncio.sleep(5)
         await rkn.delete()
         return
-
 
 @Client.on_message(filters.channel)
 async def auto_edit_caption(bot, message):
