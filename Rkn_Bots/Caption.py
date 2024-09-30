@@ -10,19 +10,20 @@ from .database import total_user, getid, delete, addCap, updateCap, insert, chnl
 from pyrogram.errors import FloodWait
 
 @Client.on_message(filters.private & filters.user(Rkn_Bots.ADMIN) & filters.command(["users"]))
-async def user_status(client, message):
-    user_id = message.from_user.id
-    first_name = message.from_user.first_name
-    username = message.from_user.username or "No Username"
+async def all_db_users_here(client, message):
+    start_t = time.time()
+    rkn = await message.reply_text("Processing...")
     total_users = await total_user()
+    user_list = await getid()
     
-    response = (
-        f"👤 Name: {first_name}\n"
-        f"🕵🏻‍♂️ Username: @{username}\n"
-        f"🔄 Total Users: {total_users}"
+    user_info = "\n".join(
+        [f"👤 Name: {user['first_name']}\n🕵🏻‍♂️ Username: @{user['username']}\n" for user in user_list]
     )
-    
-    await message.reply_text(response)
+
+    await rkn.edit(
+        f"**--Bot Users--** \n\n**Total Users:** `{total_users}`\n\n{user_info}"
+    )
+
 
 @Client.on_message(filters.private & filters.user(Rkn_Bots.ADMIN) & filters.command(["broadcast"]))
 async def broadcast(bot, message):
@@ -56,12 +57,14 @@ async def broadcast(bot, message):
                 await asyncio.sleep(e.x)
         await rkn.edit(f"<u>Broadcast Completed</u>\n\n• Total users: {tot}\n• Successful: {success}\n• Blocked users: {blocked}\n• Deleted accounts: {deactivated}\n• Unsuccessful: {failed}")
 
+
 @Client.on_message(filters.private & filters.user(Rkn_Bots.ADMIN) & filters.command("restart"))
 async def restart_bot(b, m):
     rkn_msg = await b.send_message(text="**🔄 Processes stopped. Bot is restarting...**", chat_id=m.chat.id)
     await asyncio.sleep(3)
     await rkn_msg.edit("**✅ Bot is restarted. You can now use me**")
     os.execl(sys.executable, sys.executable, *sys.argv)
+
 
 @Client.on_message(filters.command("start") & filters.private)
 async def start_cmd(bot, message):
@@ -75,6 +78,7 @@ async def start_cmd(bot, message):
             ],[
             types.InlineKeyboardButton('🔥 Source Code 🔥', url='https://t.me/code_lelo/2')
         ]]))
+
 
 @Client.on_message(filters.command(["set_caption", "set"]) & filters.channel)
 async def setCaption(bot, message):
@@ -94,6 +98,7 @@ async def setCaption(bot, message):
         await addCap(chnl_id, caption)
         return await message.reply(f"Successfully Updated Your Caption.\n\nYour New Caption: `{caption}`")
 
+
 @Client.on_message(filters.command(["delcaption", "del_caption", "delete_caption"]) & filters.channel)
 async def delCaption(_, msg):
     chnl_id = msg.chat.id
@@ -105,6 +110,7 @@ async def delCaption(_, msg):
         await asyncio.sleep(5)
         await rkn.delete()
         return
+
 
 @Client.on_message(filters.channel)
 async def auto_edit_caption(bot, message):
