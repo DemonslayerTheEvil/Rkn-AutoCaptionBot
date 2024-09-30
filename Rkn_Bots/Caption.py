@@ -79,7 +79,7 @@ async def start_cmd(bot, message):
 async def setCaption(bot, message):
     if len(message.command) < 2:
         return await message.reply(
-            "<b>give me a caption to set
+            "<b>give me a caption to set</b>
 <u>Example:- ⬇️</u> <code>/set_caption {file_name}
 
 {file_caption}
