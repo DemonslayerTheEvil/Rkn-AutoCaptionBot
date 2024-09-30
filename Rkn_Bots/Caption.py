@@ -17,7 +17,7 @@ async def all_db_users_here(client, message):
     user_list = await getid()
     
     user_info = "\n".join(
-        [f"👤 Name: {user['first_name']}\n🕵🏻‍♂️ Username: @{user['username']}\n" for user in user_list]
+        [f"👤 Name: <a href='tg://user?id={user['_id']}'>{user['first_name']}</a>\n🕵🏻‍♂️ Username: @{user['username']}\n" for user in user_list]
     )
 
     await rkn.edit(
