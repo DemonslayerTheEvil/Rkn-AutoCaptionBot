@@ -33,7 +33,6 @@ async def broadcast(bot, message):
         await rkn.edit(f"bot broadcasting started...")
         async for user in all_users:
             try:
-                time.sleep(1)
                 await message.reply_to_message.copy(user['_id'])
                 success += 1
             except errors.InputUserDeactivated:
@@ -79,14 +78,7 @@ async def start_cmd(bot, message):
 async def setCaption(bot, message):
     if len(message.command) < 2:
         return await message.reply(
-            "<b>give me a caption to set</b>
-<u>Example:- ⬇️</u> <code>/set_caption {file_name}
-
-{file_caption}
-
-size » {file_size}
-
-Join :- @ your channel username😉</code>"
+            "<b>give me a caption to set</b>\n<u>Example:- ⬇️</u> <code>/set_caption {file_name}\n\n{file_caption}\n\nsize » {file_size}\n\nJoin :- @your_channel</code>"
         )
     chnl_id = message.chat.id
     caption = (
