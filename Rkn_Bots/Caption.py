@@ -88,7 +88,7 @@ async def set_caption(bot, message):
         return await message.reply(f"Caption added successfully:\n\n`{caption}`")
 
 # Command to delete a custom caption
-@Client.on_message(filters.command(["delcaption", "del_caption", "delete_caption"]) & filters.channel)
+@Client.on_message(filters.command(["delcaption", "del_caption", "delete_caption", "del"]) & filters.channel)
 async def del_caption(_, msg):
     chnl_id = msg.chat.id
     try:
