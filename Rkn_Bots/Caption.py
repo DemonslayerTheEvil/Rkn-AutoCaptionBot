@@ -106,7 +106,17 @@ async def delCaption(_, msg):
         await asyncio.sleep(5)
         await rkn.delete()
         return
-
+        
+# New command to view the current caption
+@Client.on_message(filters.command("view") & filters.channel)
+async def viewCaption(bot, message):
+    chnl_id = message.chat.id
+    chkData = await chnl_ids.find_one({"chnl_id": chnl_id})
+    if chkData:
+        current_caption = chkData["caption"]
+        return await message.reply(f"Your Current Caption:\n`{current_caption}`")
+    else:
+        return await message.reply("<b>No custom caption set. Using default caption.</b>")
 
 @Client.on_message(filters.channel)
 async def auto_edit_caption(bot, message):
