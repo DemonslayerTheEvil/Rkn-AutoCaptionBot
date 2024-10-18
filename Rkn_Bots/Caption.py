@@ -5,26 +5,28 @@
 
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram import Client, filters, errors, types
+from pyrogram import errors
 from config import Rkn_Bots
-import asyncio, re, time, sys, os
+import asyncio, time, sys, os
 from .database import total_user, getid, delete, addCap, updateCap, insert, chnl_ids
 from pyrogram.errors import FloodWait
 
-@Client.on_message(filters.private & filters.user(Rkn_Bots.ADMIN) & filters.command(["users"]))
+@Client.on_message(filters.private & filters.user(Rkn_Bots.ADMIN) & filters.command("users"))
 async def all_db_users_here(client, message):
     start_t = time.time()
     rkn = await message.reply_text("Processing...")
     total_users = await total_user()
     user_list = await getid()
-    
+
     user_info = "\n".join(
-        [f"👤 Name: <a href='tg://user?id={user['_id']}'>{user['first_name']}</a>\n🕵🏻‍♂️ Username: @{user['username']}\n" for user in user_list])
+        [f"👤 Name: <a href='tg://user?id={user['_id']}'>{user['first_name']}</a>\n🕵🏻‍♂️ Username: @{user['username']}\n" for user in user_list]
+    )
 
     await rkn.edit(
-        f"**--Bot Users--** \n\n**Total Users:** `{total_users}`\n\n{user_info}")
+        f"**--Bot Users--** \n\n**Total Users:** `{total_users}`\n\n{user_info}"
+    )
 
-@Client.on_message(filters.private & filters.user(Rkn_Bots.ADMIN) & filters.command(["broadcast"]))
+@Client.on_message(filters.private & filters.user(Rkn_Bots.ADMIN) & filters.command("broadcast"))
 async def broadcast(bot, message):
     if message.reply_to_message:
         rkn = await message.reply_text("Bot Processing.\nI am checking all bot users.")
@@ -34,10 +36,11 @@ async def broadcast(bot, message):
         failed = 0
         deactivated = 0
         blocked = 0
-        await rkn.edit(f"bot broadcasting started...")
-        async for user in all_users:
+
+        await rkn.edit("Bot broadcasting started...")
+        for user in all_users:
             try:
-                time.sleep(1)
+                time.sleep(1)  # Consider using asyncio.sleep for better async performance
                 await message.reply_to_message.copy(user['_id'])
                 success += 1
             except errors.InputUserDeactivated:
@@ -49,13 +52,14 @@ async def broadcast(bot, message):
             except Exception as e:
                 failed += 1
                 await delete({"_id": user['_id']})
-                pass
+                print(f"Failed to send to {user['_id']}: {e}")
+
             try:
                 await rkn.edit(f"<u>Broadcast Processing</u>\n\n• Total users: {tot}\n• Successful: {success}\n• Blocked users: {blocked}\n• Deleted accounts: {deactivated}\n• Unsuccessful: {failed}")
             except FloodWait as e:
                 await asyncio.sleep(e.x)
-        await rkn.edit(f"<u>Broadcast Completed</u>\n\n• Total users: {tot}\n• Successful: {success}\n• Blocked users: {blocked}\n• Deleted accounts: {deactivated}\n• Unsuccessful: {failed}")
 
+        await rkn.edit(f"<u>Broadcast Completed</u>\n\n• Total users: {tot}\n• Successful: {success}\n• Blocked users: {blocked}\n• Deleted accounts: {deactivated}\n• Unsuccessful: {failed}")
 
 @Client.on_message(filters.private & filters.user(Rkn_Bots.ADMIN) & filters.command("restart"))
 async def restart_bot(b, m):
@@ -64,39 +68,41 @@ async def restart_bot(b, m):
     await rkn_msg.edit("**✅ Bot is restarted. You can now use me**")
     os.execl(sys.executable, sys.executable, *sys.argv)
 
-
 @Client.on_message(filters.command(["set_caption", "set"]) & filters.channel)
 async def setCaption(bot, message):
     if len(message.command) < 2:
         return await message.reply(
-            "<b>give me a caption to set</b>\n<u>Example:- ⬇️</u>\n\n<code>/set_caption {file_name}\n\n{file_caption}\n\nsize » {file_size}\n\nJoin :- @your_channel</code>"
+            "<b>Give me a caption to set</b>\n<u>Example:- ⬇️</u>\n\n<code>/set_caption {file_name}\n\n{file_caption}\n\nsize » {file_size}\n\nJoin :- @your_channel</code>"
         )
+    
     chnl_id = message.chat.id
-    caption = (
-        message.text.split(" ", 1)[1] if len(message.text.split(" ", 1)) > 1 else None
-    )
+    caption = message.text.split(" ", 1)[1] if len(message.text.split(" ", 1)) > 1 else None
     chkData = await chnl_ids.find_one({"chnl_id": chnl_id})
+
     if chkData:
         await updateCap(chnl_id, caption)
         return await message.reply(f"Successfully Updated Your Caption.\n\nYour New Caption: `{caption}`")
     else:
         await addCap(chnl_id, caption)
-        return await message.reply(f"Successfully Updated Your Caption.\n\nYour New Caption: `{caption}`")
+        return await message.reply(f"Successfully Added Your Caption.\n\nYour New Caption: `{caption}`")
 
 @Client.on_message(filters.command("start") & filters.private)
 async def start_cmd(bot, message):
     user_id = int(message.from_user.id)
     await insert(user_id)
+
     # Assuming Rkn_Bots.RKN_PIC is a valid photo URL or file ID
-    await message.reply_photo(photo="Rkn_Bots.RKN_PIC",
+    await message.reply_photo(
+        photo=Rkn_Bots.RKN_PIC,
         caption=f"ʜᴇʏ, {message.from_user.mention}\n\nI ᴀᴍ ᴀ ᴀᴅᴠᴀɴᴄᴇᴅ ᴀᴜᴛᴏᴄᴀᴘᴛɪᴏɴʙᴏᴛ. ᴠᴇʀʏ sɪᴍᴘʟᴇ ᴛᴏ ᴜsᴇ ᴍᴇ. ᴊᴜsᴛ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ᴍᴀᴋᴇ ᴍᴇ ᴀɴ ᴀᴅᴍɪɴ ᴏᴠᴇʀ ᴛʜᴇʀᴇ. ᴛʜᴇɴ sᴇᴛ Yᴏᴜʀ Cᴀᴘᴛɪᴏɴ Bʏ Usɪɴɢ <mono>/set</mono> & <mono>/setCaption</mono> Cᴏᴍᴍᴀɴᴅ ғᴏʀ ᴇɴᴀʙʟɪɴɢ ᴀᴜᴛᴏᴄᴀᴘᴛɪᴏɴ.\n\n"
-                f"<blockquote>ɴᴏᴛᴇ: Mᴀᴋᴇ sᴜʀᴇ I ᴀᴍ ᴀɴ ᴀᴅᴍɪɴ ɪɴ ʏᴏᴜʀ ᴄʜᴀᴛ ᴡɪᴛʜ ᴀᴅᴍɪɴ ʀɪɢʜᴛs.</blockquote>",
+                f"<blockquote>ɴᴏᴛᴇ: Mᴀᴋᴇ sᴜʀᴇ I ᴀᴍ ᴀɴ ᴀᴅᴍɪɴ ɪɴ ʏᴏᴜʀ ᴄʜᴀᴛ ᴡɪᴛʜ ᴀᴅᴍɪɴ ʀɪɡʜᴛs.</blockquote>",
         reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton('➕ ADD TO CHANNEL ➕', url=f"https://t.me/{bot.me.username}?startchannel&admin=change_info+post_messages+edit_messages+delete_messages+restrict_members+invite_users+pin_messages+manage_topics+manage_video_chats+anonymous+manage_chat+post_stories+edit_stories+delete_stories")
         ], [
             InlineKeyboardButton('🍃 HELP', callback_data='help_button'),
             InlineKeyboardButton('🍁 ABOUT', callback_data='about_button')
-        ]]))
+        ]])
+    )
 
 # Handle the "HELP" button callback
 @Client.on_callback_query(filters.regex('help_button'))
