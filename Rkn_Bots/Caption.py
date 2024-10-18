@@ -83,58 +83,166 @@ async def setCaption(bot, message):
         await addCap(chnl_id, caption)
         return await message.reply(f"Successfully Updated Your Caption.\n\nYour New Caption: `{caption}`")
 
+# Start command handler
 @Client.on_message(filters.command("start") & filters.private)
 async def start_cmd(bot, message):
     user_id = int(message.from_user.id)
+    bot_username = (await bot.get_me()).username  # Get the bot's username
     await insert(user_id)
+    
+    ABOUT_TXT = f"""<b><blockquote>⍟───[ MY ᴅᴇᴛᴀɪʟꜱ ]───⍟</blockquote>
+    
+‣ ᴍʏ ɴᴀᴍᴇ : <a href=https://t.me/{bot_username}>{bot_username}</a>
+‣ ᴍʏ ʙᴇsᴛ ғʀɪᴇɴᴅ : <a href='tg://settings'>ᴛʜɪs ᴘᴇʀsᴏɴ</a> 
+‣ ᴅᴇᴠᴇʟᴏᴘᴇʀ : <a href='https://t.me/kingvj01'>ᴛᴇᴄʜ ᴠᴊ</a> 
+‣ ʟɪʙʀᴀʀʏ : <a href='https://docs.pyrogram.org/'>ᴘʏʀᴏɢʀᴀᴍ</a> 
+‣ ʟᴀɴɢᴜᴀɢᴇ : <a href='https://www.python.org/download/releases/3.0/'>ᴘʏᴛʜᴏɴ 3</a> 
+‣ ᴅᴀᴛᴀ ʙᴀsᴇ : <a href='https://www.mongodb.com/'>ᴍᴏɴɢᴏ ᴅʙ</a> 
+‣ ʙᴏᴛ sᴇʀᴠᴇʀ : <a href='https://heroku.com'>ʜᴇʀᴏᴋᴜ</a> 
+‣ ʙᴜɪʟᴅ sᴛᴀᴛᴜs : ᴠ2.7.1 [sᴛᴀʙʟᴇ]</b>"""
+    
     await message.reply_photo(
-        photo=Rkn_Bots.RKN_PIC,
+        photo="URL_TO_YOUR_IMAGE",  # Replace with your image URL
         caption=f"ʜᴇʏ, {message.from_user.mention}\n\nI ᴀᴍ ᴀ ᴀᴅᴠᴀɴᴄᴇᴅ ᴀᴜᴛᴏᴄᴀᴘᴛɪᴏɴʙᴏᴛ. ᴠᴇʀʏ sɪᴍᴘʟᴇ ᴛᴏ ᴜsᴇ ᴍᴇ. ᴊᴜsᴛ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ᴍᴀᴋᴇ ᴍᴇ ᴀɴ ᴀᴅᴍɪɴ ᴏᴠᴇʀ ᴛʜᴇʀᴇ. ᴛʜᴇɴ sᴇᴛ Yᴏᴜʀ Cᴀᴘᴛɪᴏɴ Bʏ Usɪɴɢ <mono>/set</mono> & <mono>/setCaption</mono> Cᴏᴍᴍᴀɴᴅ ғᴏʀ ᴇɴᴀʙʟɪɴɢ ᴀᴜᴛᴏᴄᴀᴘᴛɪᴏɴ.\n\n"
-                f"<blockquote>ɴᴏᴛᴇ: Mᴀᴋᴇ sᴜʀᴇ I ᴀᴍ ᴀɴ ᴀᴅᴍɪɴ ɪɴ ʏᴏᴜʀ ᴄʜᴀᴛ ᴡɪᴛʜ ᴀᴅᴍɪɴ ʀɪɡʜᴛs.</blockquote>",
+                f"<blockquote>ɴᴏᴛᴇ: Mᴀᴋᴇ sᴜʀᴇ I ᴀᴍ ᴀɴ ᴀᴅᴍɪɴ ɪɴ ʏᴏᴜʀ ᴄʜᴀᴛ ᴡɪᴛʜ ᴀᴅᴍɪɴ ʀɪɢʜᴛs.</blockquote>",
         reply_markup=InlineKeyboardMarkup([[
-            InlineKeyboardButton('♻️ Help', callback_data='help_button')
+            InlineKeyboardButton('➕ ADD TO CHANNEL ➕', url=f"https://t.me/{bot_username}?startchannel&admin=change_info+post_messages+edit_messages+delete_messages+restrict_members+invite_users+pin_messages+manage_topics+manage_video_chats+anonymous+manage_chat+post_stories+edit_stories+delete_stories")
         ], [
-            InlineKeyboardButton('❌ Close', callback_data='close_button'),
-            InlineKeyboardButton('🔙 Back', callback_data='back_button')
+            InlineKeyboardButton('🍃 HELP', callback_data='help_button'),
+            InlineKeyboardButton('🍁 ABOUT', callback_data='about_button')
+        ]]))
+
+# Handle the "HELP" button callback
+@Client.on_callback_query(filters.regex('help_button'))
+async def help_callback(bot, callback_query):
+    help_text = """ •••[( Get Help )]•••
+
+⚠️ ALTER ⚠️
+• Add this bot to your channel with all admin permissions.
+• Use this command in your channel.
+• These commands work only in the channel.
+• Keep the file without the forward tag.
+
+•> /set - set a new caption in your channel
+•> /del - delete your caption
+•> /view - view your caption
+
+Format:
+{file_name} = original file name
+{file_caption} = original file caption 
+{file_size} = file original size       
+
+Eg:- <code>/set
+{file_name} or {file_caption}
+
+⚙️ Size » {file_size}
+
+╔═════ ᴊᴏɪɴ ᴡɪᴛʜ ᴜs ════╗
+💥 𝙅𝙊𝙄𝙉 :- channel link 
+💥 𝙅𝙊𝙄𝙉 :- channel link
+╚═════ ᴊᴏɪɴ ᴡɪᴛʜ ᴜs ════╝
+</code>"""
+
+    await callback_query.message.edit_text(
+        help_text,
+        disable_web_page_preview=True,
+        reply_markup=InlineKeyboardMarkup([[
+            InlineKeyboardButton('🏷️ HTML TAGS', callback_data='html_tags_button'),
+            InlineKeyboardButton('🔙 Back', callback_data='start')
+        ], [
+            InlineKeyboardButton('❌ Close', callback_data='close_help')
+        ]]))
+
+# Handle the "HTML TAGS" button callback
+@Client.on_callback_query(filters.regex('html_tags_button'))
+async def html_tags_callback(bot, callback_query):
+    html_tags_text = """🔰 About Caption Font
+
+➢ Bold Text
+☞<code> <b>{filename}</b></code>
+
+➢ Spoiler Text
+☞ <code><spoiler>{filename}</spoiler></code>
+
+➢ Block Quote Text
+☞ <code><blockquote>{filename}</blockquote></code>
+
+➢ Italic Text
+☞<code> <i>{filename}</i></code>
+
+➢ Underline Text
+☞<code> <u>{filename}</u></code>
+
+➢ Strike Text
+☞<code> <s>{filename}</s></code>
+
+➢ Mono Text
+☞<code> <code>{filename}</code></code>
+
+➢ Hyperlink Text
+☞ <code><a href="https://t.me/RknDeveloper">{filename}</a></code>"""
+
+    await callback_query.message.edit_text(
+        html_tags_text,
+        disable_web_page_preview=True,
+        reply_markup=InlineKeyboardMarkup([[
+            InlineKeyboardButton('🔙 Back', callback_data='help_button'),
+            InlineKeyboardButton('❌ Close', callback_data='close_html_tags')
+        ]]))
+
+# Handle "CLOSE" action
+@Client.on_callback_query(filters.regex('close_help'))
+async def close_help_callback(bot, callback_query):
+    await callback_query.message.delete()
+
+@Client.on_callback_query(filters.regex('close_html_tags'))
+async def close_html_tags_callback(bot, callback_query):
+    await callback_query.message.delete()
+
+# Handle the "ABOUT" button callback
+@Client.on_callback_query(filters.regex('about_button'))
+async def about_callback(bot, callback_query):
+    bot_username = (await bot.get_me()).username  # Ensure the bot's username is fetched here
+    ABOUT_TXT = f"""<b><blockquote>⍟───[ MY ᴅᴇᴛᴀɪʟꜱ ]───⍟</blockquote>
+    
+‣ ᴍʏ ɴᴀᴍᴇ : <a href=https://t.me/{bot_username}>{bot_username}</a>
+‣ ᴍʏ ʙᴇsᴛ ғʀɪᴇɴᴅ : <a href='tg://settings'>ᴛʜɪs ᴘᴇʀsᴏɴ</a> 
+‣ ᴅᴇᴠᴇʟᴏᴘᴇʀ : <a href='https://t.me/kingvj01'>ᴛᴇᴄʜ ᴠᴊ</a> 
+‣ ʟɪʙʀᴀʀʏ : <a href='https://docs.pyrogram.org/'>ᴘʏʀᴏɢʀᴀᴍ</a> 
+‣ ʟᴀɴɢᴜᴀɢᴇ : <a href='https://www.python.org/download/releases/3.0/'>ᴘʏᴛʜᴏɴ 3</a> 
+‣ ᴅᴀᴛᴀ ʙᴀsᴇ : <a href='https://www.mongodb.com/'>ᴍᴏɴɢᴏ ᴅʙ</a> 
+‣ ʙᴏᴛ sᴇʀᴠᴇʀ : <a href='https://heroku.com'>ʜᴇʀᴏᴋᴜ</a> 
+‣ ʙᴜɪʟᴅ sᴛᴀᴛᴜs : ᴠ2.7.1 [sᴛᴀʙʟᴇ]</b>"""
+    
+    await callback_query.message.edit_text(
+        ABOUT_TXT,
+        disable_web_page_preview=True,
+        reply_markup=InlineKeyboardMarkup([[
+            InlineKeyboardButton('Sᴜᴘᴘᴏʀᴛ Gʀᴏᴜᴘ', url='https://t.me/RxBotz')
+        ], [
+            InlineKeyboardButton('🔙 Back', callback_data='start'),
+            InlineKeyboardButton('❌ Close', callback_data='close_about')
+        ]]))
+
+# Handle "CLOSE" action for ABOUT button
+@Client.on_callback_query(filters.regex('close_about'))
+async def close_about_callback(bot, callback_query):
+    await callback_query.message.delete()
+
+# Handle "BACK" to the main START message
+@Client.on_callback_query(filters.regex('start'))
+async def back_to_start_callback(bot, callback_query):
+    bot_username = (await bot.get_me()).username  # Get the bot's username
+    await callback_query.message.edit_caption(
+        caption=f"ʜᴇʏ, {callback_query.from_user.mention}\n\nI ᴀᴍ ᴀ ᴀᴅᴠᴀɴᴄᴇᴅ ᴀᴜᴛᴏᴄᴀᴘᴛɪᴏɴʙᴏᴛ. ᴠᴇʀʏ sɪᴍᴘʟᴇ ᴛᴏ ᴜsᴇ ᴍᴇ. ᴊᴜsᴛ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ᴍᴀᴋᴇ ᴍᴇ ᴀɴ ᴀᴅᴍɪɴ ᴏᴠᴇʀ ᴛʜᴇʀᴇ. ᴛʜᴇɴ sᴇᴛ Yᴏᴜʀ Cᴀᴘᴛɪᴏɴ Bʏ Usɪɴɢ <mono>/set</mono> & <mono>/setCaption</mono> Cᴏᴍᴍᴀɴᴅ ғᴏʀ ᴇɴᴀʙʟɪɴɢ ᴀᴜᴛᴏᴄᴀᴘᴛɪᴏɴ.\n\n"
+                f"<blockquote>ɴᴏᴛᴇ: Mᴀᴋᴇ sᴜʀᴇ I ᴀᴍ ᴀɴ ᴀᴅᴍɪɴ ɪɴ ʏᴏᴜʀ ᴄʜᴀᴛ ᴡɪᴛʜ ᴀᴅᴍɪɴ ʀɪɢʜᴛs.</blockquote>",
+        reply_markup=InlineKeyboardMarkup([[
+            InlineKeyboardButton('➕ ADD TO CHANNEL ➕', url=f"https://t.me/{bot_username}?startchannel&admin=change_info+post_messages+edit_messages+delete_messages+restrict_members+invite_users+pin_messages+manage_topics+manage_video_chats+anonymous+manage_chat+post_stories+edit_stories+delete_stories")
+        ], [
+            InlineKeyboardButton('🍃 HELP', callback_data='help_button'),
+            InlineKeyboardButton('🍁 ABOUT', callback_data='about_button')
         ]]))
     
-@Client.on_callback_query(filters.regex('help_button'))
-async def help_button_callback(bot, callback_query):
-    await callback_query.answer()  # Acknowledge the callback
-    help_text = (
-        "•••[( Get Help )]•••\n\n"
-        "⚠️ ALTER ⚠️\n"
-        "• add this bot in your channel with all admin permission\n"
-        "• use this command in your channel\n"
-        "• this command works only in channels\n"
-        "• keep file without forward tag\n\n"
-        "•> /set - set new caption in your channel\n"
-        "•> /del - delete your caption\n"
-        "•> /view - view your caption\n\n"
-        "Format:\n"
-        "{file_name} = original file name\n"
-        "{file_caption} = original file caption\n"
-        "{file_size} = file original size\n\n"
-        "Eg:- /set\n"
-        "{file_name} or {file_caption}\n\n"
-        "⚙️ Size » {file_size}\n\n"
-        "╔═════ ᴊᴏɪɴ ᴡɪᴛʜ ᴜs ════╗\n"
-        "💥 𝙹𝙾𝙸𝙽 :- channel link\n"
-        "💥 𝙹𝙾𝙸𝙽 :- channel link\n"
-        "╚═════ ᴊᴏɪɴ ᴡɪᴛʜ ᴜs ════╝"
-    )
-    await callback_query.message.edit_caption(help_text)
-
-@Client.on_callback_query(filters.regex('close_button'))
-async def close_button_callback(bot, callback_query):
-    await callback_query.answer()  # Acknowledge the callback
-    await callback_query.message.delete()  # Close the page
-
-@Client.on_callback_query(filters.regex('back_button'))
-async def back_button_callback(bot, callback_query):
-    await callback_query.answer()  # Acknowledge the callback
-    await start_cmd(bot, callback_query.message)  # Call start_cmd to go back
-
 @Client.on_message(filters.command(["delcaption", "del_caption", "delete_caption", "del"]) & filters.channel)
 async def del_caption(_, msg):
     chnl_id = msg.chat.id
