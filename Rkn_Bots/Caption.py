@@ -152,28 +152,28 @@ async def html_tags_callback(bot, callback_query):
     html_tags_text = """🔰 About Caption Font
 
 ➢ Bold Text
-☞<code> <b>{filename}</b></code>
+☞ <code>&lt;b&gt;{filename}&lt;/b&gt;</code>
 
 ➢ Spoiler Text
-☞ <code><spoiler>{filename}</spoiler></code>
+☞ <code>&lt;spoiler&gt;{filename}&lt;/spoiler&gt;</code>
 
 ➢ Block Quote Text
-☞ <code><blockquote>{filename}</blockquote></code>
+☞ <code>&lt;blockquote&gt;{filename}&lt;/blockquote&gt;</code>
 
 ➢ Italic Text
-☞<code> <i>{filename}</i></code>
+☞ <code>&lt;i&gt;{filename}&lt;/i&gt;</code>
 
 ➢ Underline Text
-☞<code> <u>{filename}</u></code>
+☞ <code>&lt;u&gt;{filename}&lt;/u&gt;</code>
 
 ➢ Strike Text
-☞<code> <s>{filename}</s></code>
+☞ <code>&lt;s&gt;{filename}&lt;/s&gt;</code>
 
 ➢ Mono Text
-☞<code> <code>{filename}</code></code>
+☞ <code>&lt;code&gt;{filename}&lt;/code&gt;</code>
 
 ➢ Hyperlink Text
-☞ <code><a href="https://t.me/RknDeveloper">{filename}</a></code>"""
+☞ <code>&lt;a href="https://t.me/RxBotz"&gt;{filename}&lt;/a&gt;</code>"""
 
     await callback_query.message.edit_text(
         html_tags_text,
@@ -200,7 +200,7 @@ async def about_callback(bot, callback_query):
     
 ‣ ᴍʏ ɴᴀᴍᴇ : <a href=https://t.me/{bot_username}>{bot_username}</a>
 ‣ ᴍʏ ʙᴇsᴛ ғʀɪᴇɴᴅ : <a href='tg://settings'>ᴛʜɪs ᴘᴇʀsᴏɴ</a> 
-‣ ᴅᴇᴠᴇʟᴏᴘᴇʀ : <a href='https://t.me/kingvj01'>ᴛᴇᴄʜ ᴠᴊ</a> 
+‣ ᴅᴇᴠᴇʟᴏᴘᴇʀ : <a href='https://t.me/RxBotz'>ʀ'x ʙᴏᴛᴢ</a> 
 ‣ ʟɪʙʀᴀʀʏ : <a href='https://docs.pyrogram.org/'>ᴘʏʀᴏɢʀᴀᴍ</a> 
 ‣ ʟᴀɴɢᴜᴀɢᴇ : <a href='https://www.python.org/download/releases/3.0/'>ᴘʏᴛʜᴏɴ 3</a> 
 ‣ ᴅᴀᴛᴀ ʙᴀsᴇ : <a href='https://www.mongodb.com/'>ᴍᴏɴɢᴏ ᴅʙ</a> 
